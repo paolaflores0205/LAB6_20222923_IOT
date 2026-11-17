@@ -6,4 +6,5 @@
     </style>
 
     <style name="Theme.Lab6" parent="Base.Theme.Lab6" />
+    <style name="Theme.Acceso" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 </resources>

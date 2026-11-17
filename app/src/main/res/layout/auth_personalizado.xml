@@ -1,0 +1,9 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center" android:padding="28dp">
+        <ImageView android:layout_width="100dp" android:layout_height="100dp" android:src="@drawable/pucp" android:contentDescription="Logo de la aplicación" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mis sesiones de estudio" android:textSize="28sp" android:gravity="center" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Elige cómo acceder. Con correo puedes registrarte o recuperar tu contraseña." android:gravity="center" android:layout_marginVertical="24dp" />
+        <Button android:id="@+id/btnCorreo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Continuar con correo" />
+        <Button android:id="@+id/btnGoogle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Continuar con Google" />
+    </LinearLayout>
+</ScrollView>

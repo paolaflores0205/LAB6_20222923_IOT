@@ -1,0 +1,16 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Estadísticas de estudio" android:textSize="26sp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Filtrar ambos gráficos por curso" android:labelFor="@id/spCurso" android:layout_marginTop="16dp" />
+            <Spinner android:id="@+id/spCurso" android:layout_width="match_parent" android:layout_height="48dp" />
+            <TextView android:id="@+id/tvResumen" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cargando sesiones…" android:paddingVertical="12dp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Horas por mes (mes/año)" android:textSize="20sp" />
+            <com.example.lab6.GraficoView android:id="@+id/graficoBarras" android:layout_width="match_parent" android:layout_height="wrap_content" android:importantForAccessibility="yes" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Horas por tipo de actividad" android:textSize="20sp" android:layout_marginTop="20dp" />
+            <com.example.lab6.GraficoView android:id="@+id/graficoTorta" android:layout_width="match_parent" android:layout_height="wrap_content" android:importantForAccessibility="yes" />
+        </LinearLayout>
+    </ScrollView>
+    <com.google.android.material.bottomnavigation.BottomNavigationView android:id="@+id/navegacion" android:layout_width="match_parent" android:layout_height="wrap_content" app:menu="@menu/navegacion" app:labelVisibilityMode="labeled" />
+</LinearLayout>

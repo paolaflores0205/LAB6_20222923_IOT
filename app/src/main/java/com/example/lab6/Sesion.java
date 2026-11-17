@@ -6,7 +6,7 @@ public class Sesion {
     private String id;
     private String curso;
     private Date fecha;
-    private Integer horasDedicadas;
+    private Double horasDedicadas;
     private String tipoActividad;
 
     public Sesion() {
@@ -36,11 +36,11 @@ public class Sesion {
         this.fecha = fecha;
     }
 
-    public Integer getHorasDedicadas() {
+    public Double getHorasDedicadas() {
         return horasDedicadas;
     }
 
-    public void setHorasDedicadas(Integer horasDedicadas) {
+    public void setHorasDedicadas(Double horasDedicadas) {
         this.horasDedicadas = horasDedicadas;
     }
 

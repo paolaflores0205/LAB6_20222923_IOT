@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /usuarios/{uid}/sesiones/{sesionId} {
+      function propietario() {
+        return request.auth != null && request.auth.uid == uid;
+      }
+      function sesionValida() {
+        let d = request.resource.data;
+        return d.keys().hasAll(['curso', 'fecha', 'horasDedicadas', 'tipoActividad'])
+          && d.keys().hasOnly(['curso', 'fecha', 'horasDedicadas', 'tipoActividad'])
+          && d.curso is string && d.curso.size() > 0 && d.curso.size() <= 100
+          && d.fecha is timestamp
+          && d.horasDedicadas is number && d.horasDedicadas > 0 && d.horasDedicadas <= 24
+          && d.tipoActividad in ['Teoría', 'Práctica', 'Laboratorio'];
+      }
+      allow read, delete: if propietario();
+      allow create, update: if propietario() && sesionValida();
+    }
+  }
+}
