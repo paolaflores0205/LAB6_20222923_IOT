@@ -14,3 +14,7 @@
 .cxx
 /tmp/
 local.properties
+
+# Compilados de los microservicios Maven
+microservicios/**/target/
+microservicios/logs/

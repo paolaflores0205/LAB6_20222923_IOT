@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: servicio-reportes
+  cloud:
+    openfeign:
+      client:
+        config:
+          servicio-estadisticas:
+            connectTimeout: 2000
+            readTimeout: 5000
+server:
+  port: 8020
+eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+    # Feign no reintenta automáticamente esta operación.

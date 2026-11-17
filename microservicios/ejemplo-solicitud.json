@@ -1,0 +1,8 @@
+{
+  "curso": "IoT",
+  "sesiones": [
+    {"curso": "IoT", "fecha": "2026-11-17", "horasDedicadas": 1.5, "tipoActividad": "Teoría"},
+    {"curso": "IoT", "fecha": "2026-11-18", "horasDedicadas": 2, "tipoActividad": "Laboratorio"},
+    {"curso": "Redes", "fecha": "2026-10-12", "horasDedicadas": 3, "tipoActividad": "Práctica"}
+  ]
+}

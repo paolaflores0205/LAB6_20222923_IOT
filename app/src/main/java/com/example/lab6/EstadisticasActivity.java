@@ -7,33 +7,47 @@ import com.example.lab6.databinding.ActivityEstadisticasBinding;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class EstadisticasActivity extends PantallaBase {
     private ActivityEstadisticasBinding binding;
     private final ArrayList<Sesion> sesiones = new ArrayList<>();
     private final ArrayList<String> cursos = new ArrayList<>();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private ListenerRegistration escucha;
+    private Future<?> peticion;
+    private boolean activa, datosCargados;
+    private int numeroPeticion;
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
         binding = ActivityEstadisticasBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         aplicarMargenes(this, binding.getRoot());
         prepararNavegacion(binding.navegacion, R.id.navEstadisticas);
+        String servidor = getPreferences(MODE_PRIVATE).getString("servidor", "http://10.0.2.2:8020");
+        binding.etServidor.setText(servidor);
+        binding.btnActualizar.setOnClickListener(v -> consultarReporte());
         binding.spCurso.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) { mostrarGraficos(); }
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                consultarReporte();
+            }
             @Override public void onNothingSelected(AdapterView<?> parent) { }
         });
     }
     @Override protected void onStart() {
         super.onStart();
         if (!comprobarUsuario()) return;
+        activa = true; datosCargados = false;
+        binding.btnActualizar.setEnabled(true);
+        mostrarEstado("Leyendo tus sesiones de Firestore…");
         escucha = misSesiones().addSnapshotListener((datos, error) -> {
             if (error != null) {
-                binding.tvResumen.setText("No se pudieron cargar los gráficos. Revisa la conexión y los permisos de Firestore.");
-                binding.graficoBarras.setVisibility(View.GONE);
-                binding.graficoTorta.setVisibility(View.GONE);
+                datosCargados = false; numeroPeticion++;
+                binding.btnActualizar.setEnabled(true);
+                mostrarEstado("No se pudieron leer las sesiones. Revisa la conexión y los permisos de Firestore.");
                 return;
             }
             String anterior = binding.spCurso.getSelectedItemPosition() > 0 ? (String) binding.spCurso.getSelectedItem() : null;
@@ -51,21 +65,54 @@ public class EstadisticasActivity extends PantallaBase {
             binding.spCurso.setAdapter(adapter);
             int posicion = anterior == null ? 0 : cursos.indexOf(anterior);
             binding.spCurso.setSelection(Math.max(0, posicion));
-            mostrarGraficos();
+            datosCargados = true;
+            consultarReporte();
         });
     }
-    private void mostrarGraficos() {
+    private void consultarReporte() {
+        if (!activa || !datosCargados) return;
+        String servidor = binding.etServidor.getText().toString().trim();
+        if (servidor.isEmpty()) { binding.etServidor.setError("Ingresa la dirección de Reportes"); return; }
+        getPreferences(MODE_PRIVATE).edit().putString("servidor", servidor).apply();
         String curso = binding.spCurso.getSelectedItemPosition() > 0 ? (String) binding.spCurso.getSelectedItem() : null;
-        ResumenEstudio resumen = ResumenEstudio.calcular(sesiones, curso);
-        binding.tvResumen.setText(resumen.cantidad == 0 ? "No hay sesiones para este filtro." :
-                String.format(new Locale("es", "PE"), "%d sesiones · %.2f horas en total", resumen.cantidad, resumen.total));
-        binding.graficoBarras.setVisibility(View.VISIBLE);
-        binding.graficoTorta.setVisibility(View.VISIBLE);
-        binding.graficoBarras.mostrar(resumen, false);
-        binding.graficoTorta.mostrar(resumen, true);
+        ArrayList<Sesion> copia = new ArrayList<>(sesiones);
+        int numero = ++numeroPeticion;
+        if (peticion != null) peticion.cancel(true);
+        binding.btnActualizar.setEnabled(false);
+        mostrarEstado("Consultando el reporte…");
+        // HTTP se ejecuta fuera del hilo de pantalla para no bloquear la app.
+        peticion = executor.submit(() -> {
+            try {
+                ReporteApi.Resultado resultado = ReporteApi.consultar(servidor, copia, curso);
+                runOnUiThread(() -> {
+                    // Una respuesta anterior no debe reemplazar el filtro más reciente.
+                    if (!activa || numero != numeroPeticion) return;
+                    binding.btnActualizar.setEnabled(true);
+                    binding.tvResumen.setText(resultado.resumen.cantidad == 0 ? "No hay sesiones para este filtro." : resultado.mensaje);
+                    binding.graficoBarras.setVisibility(View.VISIBLE);
+                    binding.graficoTorta.setVisibility(View.VISIBLE);
+                    binding.graficoBarras.mostrar(resultado.resumen, false);
+                    binding.graficoTorta.mostrar(resultado.resumen, true);
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    if (!activa || numero != numeroPeticion) return;
+                    binding.btnActualizar.setEnabled(true);
+                    mostrarEstado("No se pudo obtener el reporte. Revisa la dirección y los tres servidores.\n" + e.getMessage());
+                });
+            }
+        });
+    }
+    private void mostrarEstado(String mensaje) {
+        binding.tvResumen.setText(mensaje);
+        binding.graficoBarras.setVisibility(View.GONE);
+        binding.graficoTorta.setVisibility(View.GONE);
     }
     @Override protected void onStop() {
-        super.onStop();
+        activa = false; numeroPeticion++;
+        if (peticion != null) peticion.cancel(true);
         if (escucha != null) { escucha.remove(); escucha = null; }
+        super.onStop();
     }
+    @Override protected void onDestroy() { executor.shutdownNow(); super.onDestroy(); }
 }

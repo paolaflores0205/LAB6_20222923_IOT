@@ -5,6 +5,9 @@
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Estadísticas de estudio" android:textSize="26sp" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Filtrar ambos gráficos por curso" android:labelFor="@id/spCurso" android:layout_marginTop="16dp" />
             <Spinner android:id="@+id/spCurso" android:layout_width="match_parent" android:layout_height="48dp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Dirección del servicio de reportes" android:labelFor="@id/etServidor" android:layout_marginTop="12dp" />
+            <EditText android:id="@+id/etServidor" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textUri" android:singleLine="true" android:hint="http://10.0.2.2:8020" android:importantForAutofill="no" />
+            <Button android:id="@+id/btnActualizar" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Consultar reporte" />
             <TextView android:id="@+id/tvResumen" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cargando sesiones…" android:paddingVertical="12dp" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Horas por mes (mes/año)" android:textSize="20sp" />
             <com.example.lab6.GraficoView android:id="@+id/graficoBarras" android:layout_width="match_parent" android:layout_height="wrap_content" android:importantForAccessibility="yes" />

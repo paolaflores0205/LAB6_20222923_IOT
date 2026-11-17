@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Lab6">
-        <activity android:name=".EstadisticasActivity" android:exported="false" />
+        <activity android:name=".EstadisticasActivity" android:windowSoftInputMode="adjustResize" android:exported="false" />
         <activity
             android:name=".FormSesionActivity"
             android:windowSoftInputMode="adjustResize"

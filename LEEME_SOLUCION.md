@@ -35,3 +35,13 @@ La apertura inicial y el selector personalizado de correo y Google también se c
 ## Ajuste del teclado
 
 El formulario usa adjustResize y reserva el espacio del teclado sin duplicar márgenes. La navegación inferior se oculta al escribir y reaparece al cerrar el teclado.
+
+## Variante con microservicios
+
+La pantalla Estadísticas ahora consume Reportes por HTTP. Los cálculos están en `microservicios/servicio-estadisticas`; Reportes lo descubre mediante Eureka y Feign.
+
+- Enunciado propuesto: `Enunciado_Microservicios_Lab6.html`.
+- Solución actual explicada: `Solucion_Microservicios_Lab6.html`.
+- Instrucciones de arranque: `microservicios/README.md`.
+
+`Solucion_Lab6.html` documenta la versión original con cálculos locales; la nueva variante necesita los tres procesos backend encendidos para generar estadísticas.
